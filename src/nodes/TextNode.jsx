@@ -76,7 +76,7 @@ export const TextNode = ({ id, data }) => {
         >
             <textarea
                 ref={textareaRef}
-                className="nodrag w-full resize-none rounded border border-[var(--vs-border)] px-2 py-1 text-sm bg-black/30 text-white placeholder-gray-500 overflow-hidden"
+                className="nodrag w-full resize-none rounded border border-[var(--vs-border)] px-2 py-1 text-sm bg-purple-800 text-white placeholder-white overflow-hidden"
                 placeholder="Type text with {{variables}}"
                 value={text}
                 onChange={(e) =>

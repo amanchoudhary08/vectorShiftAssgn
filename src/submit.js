@@ -1,3 +1,6 @@
+// SubmitButton.jsx
+// --------------------------------------------------
+
 import { useState } from 'react';
 import { useStore } from './store';
 import { validatePipeline } from './utils/pipelineValidation';
@@ -5,33 +8,26 @@ import { validatePipeline } from './utils/pipelineValidation';
 export const SubmitButton = () => {
     const nodes = useStore((s) => s.nodes);
     const edges = useStore((s) => s.edges);
+
     const [loading, setLoading] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
     const handleSubmit = async () => {
         const validation = validatePipeline(nodes, edges);
+
         if (!validation.hasInputs || !validation.hasOutputs) {
             alert('⚠️ Pipeline must have at least one Input and one Output node');
-            setLoading(false);
             return;
         }
 
         setLoading(true);
-        try {
-            // Retrieve CSRF token from cookie or meta tag as per your backend implementation
-            const getCSRFToken = () => {
-                const match = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
-                if (match) return match[2];
-                return '';
-            };
 
+        try {
             const response = await fetch('http://127.0.0.1:8000/pipelines/parse', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken(),
                 },
-                credentials: 'include',
                 body: JSON.stringify({
                     nodes: nodes.map((n) => ({ id: n.id })),
                     edges: edges.map((e) => ({
@@ -42,7 +38,7 @@ export const SubmitButton = () => {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Request failed with status ${response.status}`);
             }
 
             const data = await response.json();
@@ -53,13 +49,12 @@ export const SubmitButton = () => {
                 `🔗 Total Edges: ${data.num_edges}\n` +
                 `${data.is_dag ? '✅ Valid DAG: Yes' : '❌ Valid DAG: No (Contains Cycles)'}`
             );
-        } catch (err) {
+        } catch (error) {
+            console.error('Pipeline submission failed:', error);
             alert(
-                `❌ Failed to Submit Pipeline\n\n` +
-                `Error: ${err.message}\n\n` +
-                `Please ensure the backend is running on http://127.0.0.1:8000`
+                `❌ Failed to submit pipeline.\n\n` +
+                `Please ensure the backend is running at http://127.0.0.1:8000`
             );
-            console.error('Submission error:', err);
         } finally {
             setLoading(false);
         }
@@ -72,7 +67,7 @@ export const SubmitButton = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 disabled={loading}
-                className={`rounded-full px-8 py-3 font-semibold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-300 ${loading
+                className={`rounded-full px-8 py-3 font-semibold text-white shadow-lg flex items-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${loading
                     ? 'bg-gray-600'
                     : isHovered
                         ? 'bg-gradient-to-br from-purple-800 via-indigo-700 to-blue-700'
@@ -81,9 +76,25 @@ export const SubmitButton = () => {
             >
                 {loading ? (
                     <>
-                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                            className="animate-spin h-5 w-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            />
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
                         </svg>
                         Analyzing Pipeline...
                     </>
