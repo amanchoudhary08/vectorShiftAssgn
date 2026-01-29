@@ -1,71 +1,87 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+// TextNode.jsx
+// --------------------------------------------------
+
+import { useEffect, useMemo, useRef } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
 import { useUpdateNodeInternals } from 'reactflow';
 
 export const TextNode = ({ id, data }) => {
     const updateNodeField = useStore((s) => s.updateNodeField);
-    const [text, setText] = useState(data?.text || '');
-    const textareaRef = useRef(null);
     const updateNodeInternals = useUpdateNodeInternals();
 
+    const baseRef = useRef(null);
+    const textareaRef = useRef(null);
+    const prevVarsRef = useRef([]);
+
+    // Zustand is the source of truth
+    const text = data?.text ?? '';
+
+    // Parse variables (stable + sorted)
     const variables = useMemo(() => {
         const vars = new Set();
         const regex = /{{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*}}/g;
+
         for (const match of text.matchAll(regex)) {
             vars.add(match[1]);
         }
-        return Array.from(vars);
-    }, [text]);
 
+        return Array.from(vars).sort();
+    }, [text]);
 
     // Auto-resize textarea
     useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-        }
+        if (!textareaRef.current) return;
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }, [text]);
 
-    const handleTextChange = (e) => {
-        const newText = e.target.value;
-        setText(newText);
-        updateNodeField(id, 'text', newText);
-    };
-
+    // Update handles only when variables change
     useEffect(() => {
-        updateNodeField(id, 'variables', variables);
-        updateNodeInternals(id);
+        const prev = prevVarsRef.current.join(',');
+        const next = variables.join(',');
+
+        if (prev !== next) {
+            updateNodeField(id, 'variables', variables);
+            updateNodeInternals(id);
+            prevVarsRef.current = variables;
+        }
     }, [variables, id, updateNodeField, updateNodeInternals]);
 
+    // Observe BaseNode size changes
+    useEffect(() => {
+        if (!baseRef.current) return;
 
+        const observer = new ResizeObserver(() => {
+            updateNodeInternals(id);
+        });
+
+        observer.observe(baseRef.current);
+        return () => observer.disconnect();
+    }, [id, updateNodeInternals]);
+
+    // Stable handle IDs
     const inputs = useMemo(
-        () => variables.map((v, index) => ({ id: v, key: `input-${index}` })),
-        [variables]
-    );
-    const outputs = useMemo(
-        () => [{ id: `${id}-output` }],
-        [id]
+        () => variables.map((v) => ({ id: `${id}-${v}` })),
+        [variables, id]
     );
 
     return (
         <BaseNode
+            ref={baseRef}
             title="Text"
             inputs={inputs}
-            outputs={outputs}
+            outputs={[{ id: `${id}-output` }]}
             width="w-64"
-
         >
             <textarea
                 ref={textareaRef}
-                className="nodrag w-full resize-none rounded border px-2 py-1 text-sm bg-black/30 text-white placeholder-gray-500"
-                style={{
-                    borderColor: 'var(--vs-border)',
-                    overflow: 'hidden'
-                }}
+                className="nodrag w-full resize-none rounded border border-[var(--vs-border)] px-2 py-1 text-sm bg-black/30 text-white placeholder-gray-500 overflow-hidden"
                 placeholder="Type text with {{variables}}"
                 value={text}
-                onChange={handleTextChange}
+                onChange={(e) =>
+                    updateNodeField(id, 'text', e.target.value)
+                }
             />
         </BaseNode>
     );

@@ -72,14 +72,12 @@ export const SubmitButton = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 disabled={loading}
-                className="rounded-full px-8 py-3 font-semibold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-300"
-                style={{
-                    background: loading
-                        ? '#4B5563'
-                        : isHovered
-                            ? 'linear-gradient(135deg, #4C1D95 0%, #4338CA 50%, #1E40AF 100%)'
-                            : 'linear-gradient(135deg, #5B21B6, #4F46E5, #2563EB)',
-                }}
+                className={`rounded-full px-8 py-3 font-semibold text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-300 ${loading
+                    ? 'bg-gray-600'
+                    : isHovered
+                        ? 'bg-gradient-to-br from-purple-800 via-indigo-700 to-blue-700'
+                        : 'bg-gradient-to-br from-purple-700 via-indigo-600 to-blue-600'
+                    }`}
             >
                 {loading ? (
                     <>

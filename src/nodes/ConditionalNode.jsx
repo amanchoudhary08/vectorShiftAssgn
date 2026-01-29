@@ -1,10 +1,11 @@
-import { useState } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
+import { NodeField } from "./NodeField";
 
 export const ConditionalNode = ({ id, data }) => {
     const updateNodeField = useStore((s) => s.updateNodeField);
-    const [operator, setOperator] = useState(data?.operator || '==');
+
+    const operator = data?.operator ?? '==';
 
     return (
         <BaseNode
@@ -18,15 +19,13 @@ export const ConditionalNode = ({ id, data }) => {
                 { id: `${id}-false` }
             ]}
         >
-            <div className="rounded p-2" style={{ backgroundColor: '#4C1D95' }}>
-                <label className="block text-xs text-white mb-1">Operator</label>
+            <NodeField label="Operator">
                 <select
                     className="w-full rounded border px-2 py-1 bg-transparent text-white focus:outline-none"
                     value={operator}
-                    onChange={(e) => {
-                        setOperator(e.target.value);
-                        updateNodeField(id, 'operator', e.target.value);
-                    }}
+                    onChange={(e) =>
+                        updateNodeField(id, 'operator', e.target.value)
+                    }
                 >
                     <option value="==">==</option>
                     <option value="!=">!=</option>
@@ -36,7 +35,7 @@ export const ConditionalNode = ({ id, data }) => {
                     <option value="<=">{'<='}</option>
                 </select>
                 <p className="text-xs text-gray-300 mt-1">Compare A vs B</p>
-            </div>
+            </NodeField>
         </BaseNode>
     );
 };

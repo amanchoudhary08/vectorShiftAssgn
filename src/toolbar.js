@@ -7,7 +7,7 @@ export const PipelineToolbar = () => {
     const clearNodes = useStore((s) => s.clearNodes);
 
     return (
-        <div className="glass border-b p-6" style={{ borderColor: 'var(--vs-border)', position: 'relative', zIndex: 10 }}>
+        <div className="glass border-b border-b-[var(--vs-border)] p-6 relative z-10">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-white">
                     Build Pipeline
@@ -15,7 +15,6 @@ export const PipelineToolbar = () => {
                 <button
                     onClick={clearNodes}
                     className="px-2 py-1 bg-red-800 hover:bg-red-700 text-white rounded focus:outline-none text-xs"
-                    
                 >
                     Clear All
                 </button>

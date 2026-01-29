@@ -10,7 +10,7 @@ export const LLMNode = ({ id }) => {
             ]}
             outputs={[{ id: `${id}-response` }]}
         >
-            <div className="rounded p-2" style={{ backgroundColor: '#4C1D95' }}>
+            <div className="rounded p-2 bg-[#4C1D95]">
                 <p className="text-white">Large Language Model</p>
             </div>
         </BaseNode>

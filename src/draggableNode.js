@@ -25,11 +25,7 @@ export const DraggableNode = ({ type, label }) => {
     <div
       onDragStart={(e) => onDragStart(e, type)}
       draggable
-      className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] cursor-grab active:cursor-grabbing rounded-lg text-white text-sm font-semibold shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-200 border"
-      style={{
-        backgroundColor: 'var(--vs-card-bg)',
-        borderColor: 'var(--vs-border)',
-      }}
+      className="flex items-center gap-2 px-4 py-2.5 min-w-[120px] cursor-grab active:cursor-grabbing rounded-lg text-white text-sm font-semibold shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-200 border bg-[var(--vs-card-bg)] border-[var(--vs-border)]"
     >
       <span className="text-xl">{nodeIcons[type] || '⚙️'}</span>
       <span>{label}</span>
