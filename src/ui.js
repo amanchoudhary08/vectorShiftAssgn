@@ -1,7 +1,3 @@
-// ui.js
-// Displays the drag-and-drop UI
-// --------------------------------------------------
-
 import { useState, useRef, useCallback } from 'react';
 import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
 import { useStore } from './store';
@@ -63,9 +59,9 @@ export const PipelineUI = () => {
         const { nodeType } = JSON.parse(appData);
         if (!nodeType) return;
 
-        const position = reactFlowInstance.project({
-          x: event.clientX - bounds.left,
-          y: event.clientY - bounds.top,
+        const position = reactFlowInstance.screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
         });
 
         const nodeID = getNodeID(nodeType);
@@ -88,7 +84,6 @@ export const PipelineUI = () => {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
-  // 🔒 Ensure React Flow always resolves a real target handle
   const isValidConnection = useCallback(
     (connection) => Boolean(connection.source && connection.target),
     []

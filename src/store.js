@@ -1,6 +1,3 @@
-// store.js
-// --------------------------------------------------
-
 import { create } from 'zustand';
 import {
   addEdge,
@@ -14,9 +11,6 @@ export const useStore = create((set, get) => ({
   edges: [],
   nodeIDs: {},
 
-  // --------------------------------------------------
-  // Node ID generator
-  // --------------------------------------------------
   getNodeID: (type) => {
     const nodeIDs = get().nodeIDs;
     const currentID = nodeIDs[type] ?? 0;
@@ -29,9 +23,6 @@ export const useStore = create((set, get) => ({
     return `${type}-${newID}`;
   },
 
-  // --------------------------------------------------
-  // Nodes
-  // --------------------------------------------------
   addNode: (node) => {
     set({
       nodes: [...get().nodes, node],
@@ -44,21 +35,12 @@ export const useStore = create((set, get) => ({
     });
   },
 
-  // --------------------------------------------------
-  // Edges
-  // --------------------------------------------------
   onEdgesChange: (changes) => {
     set({
       edges: applyEdgeChanges(changes, get().edges),
     });
   },
 
-  /**
-   * 🔑 CRITICAL FIX
-   * Always persist sourceHandle + targetHandle.
-   * If targetHandle is missing, React Flow connects
-   * the edge to the node center.
-   */
   onConnect: (connection) => {
     const {
       source,
@@ -67,8 +49,6 @@ export const useStore = create((set, get) => ({
       targetHandle,
     } = connection;
 
-    // Safety guard (should not happen with strict mode,
-    // but prevents corrupted edges)
     if (!source || !target || !targetHandle) {
       console.warn('Invalid connection dropped:', connection);
       return;
@@ -95,9 +75,6 @@ export const useStore = create((set, get) => ({
     });
   },
 
-  // --------------------------------------------------
-  // Node data updates
-  // --------------------------------------------------
   updateNodeField: (nodeId, fieldName, fieldValue) => {
     set({
       nodes: get().nodes.map((node) =>
@@ -114,9 +91,6 @@ export const useStore = create((set, get) => ({
     });
   },
 
-  // --------------------------------------------------
-  // Reset
-  // --------------------------------------------------
   clearNodes: () => {
     set({
       nodes: [],

@@ -1,6 +1,3 @@
-// SubmitButton.jsx
-// --------------------------------------------------
-
 import { useState } from 'react';
 import { useStore } from './store';
 import { validatePipeline } from './utils/pipelineValidation';

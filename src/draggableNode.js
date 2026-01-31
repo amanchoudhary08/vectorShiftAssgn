@@ -1,5 +1,3 @@
-// draggableNode.js
-
 const nodeIcons = {
   customInput: '📥',
   llm: '🤖',

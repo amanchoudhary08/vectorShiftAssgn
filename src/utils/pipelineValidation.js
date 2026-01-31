@@ -1,4 +1,3 @@
-// Check if all nodes are connected in the graph
 const checkConnectivity = (nodes, edges) => {
     if (nodes.length <= 1) return true;
 
@@ -24,7 +23,6 @@ const checkConnectivity = (nodes, edges) => {
     return visited.size === nodes.length;
 };
 
-// Detect cycles using DFS
 const detectCycles = (edges) => {
     const graph = new Map();
     const visited = new Set();

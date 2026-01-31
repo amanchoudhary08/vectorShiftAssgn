@@ -1,5 +1,3 @@
-// toolbar.js
-
 import { DraggableNode } from './draggableNode';
 import { useStore } from './store';
 

@@ -71,10 +71,6 @@ code {
   background: linear-gradient(135deg, #3B82F6 0%, #6D28D9 100%);
 }
 
-/* React Flow customization - VectorShift style */
-/* No custom styles needed - ReactFlow handles all node positioning and transitions */
-
-
 .react-flow__handle {
   width: 10px;
   height: 10px;
@@ -111,13 +107,11 @@ code {
   }
 }
 
-/* Dot grid background pattern */
 .dot-grid {
   background-image: radial-gradient(circle, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -166,14 +160,12 @@ code {
   animation: glow 3s ease-in-out infinite;
 }
 
-/* Glassmorphism effect */
 .glass {
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-/* Pill button style (VectorShift primary buttons) */
 .btn-pill {
   border-radius: 9999px;
   background: var(--vs-gradient);

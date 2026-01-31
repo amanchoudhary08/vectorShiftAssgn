@@ -1,6 +1,3 @@
-// TextNode.jsx
-// --------------------------------------------------
-
 import { useEffect, useMemo, useRef } from 'react';
 import { BaseNode } from './BaseNode';
 import { useStore } from '../store';
@@ -14,10 +11,8 @@ export const TextNode = ({ id, data }) => {
     const textareaRef = useRef(null);
     const prevVarsRef = useRef([]);
 
-    // Zustand is the source of truth
     const text = data?.text ?? '';
 
-    // Parse variables (stable + sorted)
     const variables = useMemo(() => {
         const vars = new Set();
         const regex = /{{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*}}/g;
@@ -29,26 +24,28 @@ export const TextNode = ({ id, data }) => {
         return Array.from(vars).sort();
     }, [text]);
 
-    // Auto-resize textarea
     useEffect(() => {
         if (!textareaRef.current) return;
         textareaRef.current.style.height = 'auto';
         textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }, [text]);
 
-    // Update handles only when variables change
     useEffect(() => {
         const prev = prevVarsRef.current.join(',');
         const next = variables.join(',');
 
         if (prev !== next) {
             updateNodeField(id, 'variables', variables);
-            updateNodeInternals(id);
             prevVarsRef.current = variables;
         }
+
+        const timeoutId = setTimeout(() => {
+            updateNodeInternals(id);
+        }, 200);
+
+        return () => clearTimeout(timeoutId);
     }, [variables, id, updateNodeField, updateNodeInternals]);
 
-    // Observe BaseNode size changes
     useEffect(() => {
         if (!baseRef.current) return;
 
@@ -60,7 +57,6 @@ export const TextNode = ({ id, data }) => {
         return () => observer.disconnect();
     }, [id, updateNodeInternals]);
 
-    // Stable handle IDs
     const inputs = useMemo(
         () => variables.map((v) => ({ id: `${id}-${v}` })),
         [variables, id]
